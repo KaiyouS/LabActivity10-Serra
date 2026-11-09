@@ -1,58 +1,92 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Lab Activity 10: Barangay Bulletin &ndash; Purok Serra
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Ateneo de Davao University &bull; 4-334 Full-Stack Web Development  
+1st Semester, July&ndash;November 2026  
+**Student:** Kaiyou Serra  
+**Repository:** `LabActivity10-Serra`
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Project Overview
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+The Barangay Matina Crossing Hall in Davao City has migrated its cork board bulletin system into an online **Barangay Bulletin**. Residents can browse community announcements, search titles, filter by category, page through results, and read detailed bulletins while view counts are automatically tracked.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+This project implements:
+- **Migrations** with foreign key constraints, `up()` and `down()` methods, and an alter migration for view counting.
+- **Eloquent Models** with explicit `$fillable` properties and attribute `$casts`.
+- **Faker Factories & Seeders** with state management (`draft()`) and relational sequences.
+- **Query Builder & Pagination** with conditional search (`?q=`), category filtering (`?category=`), pinned posts priority, and query string preservation (`withQueryString()`).
+- **Show View** with draft protection (`abort(404)`) and view counter increment via Eloquent `save()`.
+- **Blade & Tailwind CSS** responsive layout and component cards.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Personalization Details
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Requirement | Implementation Detail |
+|---|---|
+| **Site Title** | `Barangay Bulletin – Purok Serra` |
+| **Kagawad Author** | `Kagawad Kaiyou Serra` (`kagawad.serra@bulletin.test`) created with `Author::create()` |
+| **Pinned Post** | `Purok Serra Clean-up Drive` (Pinned: `true`, Published: `2026-11-16 08:00:00`) |
+| **Birthday Post Date** | `November 16, 2026` |
+| **Posts Per Page** | **6** (Last name "Serra" has 5 letters; minimum requirement is 6 per page for names under 6 letters) |
+| **Custom Category** | `Entertainment` (in addition to `Announcement`, `Health`, `Peace & Order`, and `Ayuda`) |
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## Installation & How to Run
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+Follow these steps to set up and run the application locally:
 
+### 1. Clone the repository and install PHP dependencies
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/your-username/LabActivity10-Serra.git
+cd LabActivity10-Serra
+composer install
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Environment setup & application key
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-## Contributing
+### 3. SQLite Database configuration
+Laravel 12 uses SQLite by default. Ensure the database file exists:
+```bash
+# Windows PowerShell
+New-Item -ItemType File -Path database/database.sqlite -Force
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Linux / macOS
+touch database/database.sqlite
+```
 
-## Code of Conduct
+### 4. Run migrations and seed data
+```bash
+php artisan migrate:fresh --seed
+```
+This seeds:
+- **5 Authors** (1 hand-crafted Kagawad + 4 factory-generated authors)
+- **51 Posts** (40 published factory posts, 10 draft factory posts, and 1 hand-crafted pinned birthday post)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 5. Install frontend dependencies & compile assets
+```bash
+npm install
+npm run dev
+# or for a production build:
+npm run build
+```
 
-## Security Vulnerabilities
+### 6. Start the local development server
+```bash
+php artisan serve
+```
+Open [http://localhost:8000](http://localhost:8000) in your web browser. It will automatically redirect to `/posts`.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## Deliverables & Verification
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **Tinker Verification Screenshot:** Saved at `docs/tinker.png` showing `App\Models\Post::find(1)` title modification and saving via ActiveRecord.
+- **Rollback Verification:** Tested with `php artisan migrate:rollback` and `php artisan migrate`.
+- **Automated Tests:** Run `php artisan test` to verify routes, filtering, pagination, 404 draft responses, and view counting.
